@@ -149,4 +149,4 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
     return { MakePlay, getActivePlayer, PrintBoard };
 }
 
-const ticTacToe = Game();
+const ticTacToe = Game(); 
