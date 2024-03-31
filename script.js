@@ -1,3 +1,5 @@
+GameController()
+
 // For controlling the game flow.
 function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
     const gameBoard = (function() {
@@ -30,7 +32,7 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
         }
 
         function Cell() {
-            const cell = {mark: ''};
+            const cell = {};
         
             const AddMark = (playerMark) => {
                 cell.mark = playerMark;
@@ -86,6 +88,8 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
         });
         console.log(board);
     };
+
+    function ResetBoard() { gameBoard.NewBoard() }
 
     function getActivePlayer() { return player };
 
@@ -146,7 +150,31 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
         }
     }
 
-    return { MakePlay, getActivePlayer, PrintBoard };
+    return { MakePlay, getActivePlayer, PrintBoard, ResetBoard };
 }
 
-const ticTacToe = Game(); 
+// Controls interface between Game and the DOM.
+function GameController() {
+    const ticTacToe = Game(); 
+    const gameGrid = document.querySelector('#cell-grid');
+
+    gameGrid.addEventListener('click', Play);
+
+    function Play(event) {
+        const activePlayer = ticTacToe.getActivePlayer();
+        const playerMark = activePlayer.mark;
+        // Get the index of the row and column that the player clicked.
+        const indecies = {
+            row: event.target.dataset.row,
+            column: event.target.dataset.column
+        };
+
+        ticTacToe.MakePlay(indecies.row, indecies.column, activePlayer);
+        markCell(playerMark, event);
+
+        function markCell (playerMark, event) {
+            const cell = event.target;
+            cell.innerText = playerMark;
+        }
+    }
+}
