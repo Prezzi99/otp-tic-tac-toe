@@ -104,40 +104,30 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
         if (matchAllThree(board[indecies.row])) return player;
     
         // Check the column of the last play
-        const Column = [];
+        const Column = []; 
         for (let i = 0; i < 3; i++) Column.push(board[i][indecies.column]);
         if (matchAllThree(Column)) return player;
     
         // Check for diagonal pattern
         const {row, column} = indecies;
-        const Diagonal = [];
 
-        if (row == 0 && column == 0 || row == 2 && column == 2) {
-            // Top row, left column
+        if (row == 0 && column == 0 || row == 2 && column == 2 || row == 1 && column == 1) {
+            // Left Diagonal, from top
+            const Diagonal = [];
             for (let i = 0; i < 3; i++) Diagonal.push(board[i][i]);
             if (matchAllThree(Diagonal)) return player;
 
         }
-        else if (row == 2 && column == 0 || row == 0 && column == 2) {
-            // Bottom row, left column
+        if (row == 2 && column == 0 || row == 0 && column == 2 || row == 1 && column == 1) {
+            // Right Diagonal, from top
+            const Diagonal = [];
             let startColumn = 2;
             for (let i = 0; i < 3; i++) Diagonal.push(board[i][startColumn--]);
+            const result = [];
+            // Diagonal.forEach((cell) => result.push(cell.GetMark()));
+            console.log(Diagonal);
             if (matchAllThree(Diagonal)) return player;
 
-        }
-        else if (row == 1 && column == 1) {
-            // top row, right column
-            for (let i = 0; i < 3; i++) Diagonal.push(board[i][i]);
-            if (matchAllThree(Diagonal)) {
-                return player
-            }
-            else {
-
-                Diagonal.splice(0, Diagonal.length); //Remove all the elements in Diagonal.
-                let startColumn = 2;
-                for (let i = 0; i < 3; i++) Diagonal.push(board[i][startColumn--]);
-                if (matchAllThree(Diagonal)) return player
-            }
         }
 
         function matchAllThree(gridLine) {
