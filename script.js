@@ -7,7 +7,7 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
         const rows = 3;
         const columns = 3;
     
-        NewBoard()
+        NewBoard();
     
         const UpdateBoard = (row, column, mark) => {
             // If the cell doesn't have a mark. Add the players mark.
@@ -48,27 +48,42 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
         return { UpdateBoard, NewBoard, GetBoard };
     })();
 
-    // Count past plays
-    let playCount;
+    // Count plays
+    let playCount = 0;
+    let draws = 0; // Count ties
 
     // Create players
     const players = [
-        {playerOne, mark: 'X'},
-        {playerTwo, mark: 'O'}
-    ]
+        {playerOne, mark: 'X', score: 0},
+        {playerTwo, mark: 'O', score: 0}
+    ];
 
     let player = players[0];
 
     // Play round
     function MakePlay(row, column, player) {
         validPlay = gameBoard.UpdateBoard(row, column, player.mark);
-        if (validPlay && playCount < 3) playCount++;
-        PrintBoard();
-        winner = FindWinner({row, column});
-        if (winner) console.log({winner});
+        if (validPlay) {
+            PrintBoard();
+            playCount++ 
+            winner = FindWinner({row, column});
+            if (winner) {
+                console.log({winner});
+                winner.score++;
+                gameBoard.NewBoard();
+            }
 
-        // Switch player if the play is valid and is not a winning move
-        (validPlay) ? SwitchPlayer(player) : console.log('Invalid Play');
+            if (playCount === 9) {   
+                gameBoard.NewBoard();
+                if (!winner) draws++
+            }
+
+            SwitchPlayer(player);
+            return true;
+        }
+        else {
+            console.log('Invalid Play');
+        }
     }
 
     // Switch player
@@ -89,7 +104,7 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
         console.log(board);
     };
 
-    function ResetBoard() { gameBoard.NewBoard() }
+    function resetBoard() { gameBoard.NewBoard() }
 
     function getActivePlayer() { return player };
 
@@ -125,7 +140,6 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
             for (let i = 0; i < 3; i++) Diagonal.push(board[i][startColumn--]);
             const result = [];
             // Diagonal.forEach((cell) => result.push(cell.GetMark()));
-            console.log(Diagonal);
             if (matchAllThree(Diagonal)) return player;
 
         }
@@ -140,7 +154,7 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
         }
     }
 
-    return { MakePlay, getActivePlayer, PrintBoard, ResetBoard };
+    return { MakePlay, getActivePlayer, PrintBoard, resetBoard };
 }
 
 // Controls interface between Game and the DOM.
@@ -159,8 +173,8 @@ function GameController() {
             column: event.target.dataset.column
         };
 
-        ticTacToe.MakePlay(indecies.row, indecies.column, activePlayer);
-        markCell(playerMark, event);
+        const validPlay = ticTacToe.MakePlay(indecies.row, indecies.column, activePlayer);
+        if (validPlay) markCell(playerMark, event);
 
         function markCell (playerMark, event) {
             const cell = event.target;
