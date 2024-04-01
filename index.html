@@ -8,6 +8,16 @@
     <script src="script.js" defer></script>
 </head>
 <body>
+    <form action="" method="post">
+        <label for="player-one">Player One</label>
+        <input type="text" class="player-name" required id="player-one">
+
+        <label for="player-two">Player Two</label>
+        <input type="text" class="player-name" required id="player-two">
+
+        <input type="submit" id="start-game">
+    </form>
+    <button id="new-round">Play Again</button>
     <div id="cell-grid">
         <button data-row="0" data-column="0"></button>
         <button data-row="0" data-column="1"></button>

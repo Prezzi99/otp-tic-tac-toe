@@ -1,4 +1,4 @@
-GameController()
+// GameController()
 
 // For controlling the game flow.
 function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
@@ -154,15 +154,24 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
         }
     }
 
-    return { MakePlay, getActivePlayer, PrintBoard, resetBoard };
+    return { MakePlay, getActivePlayer, resetBoard, playCount };
 }
 
 // Controls interface between Game and the DOM.
-function GameController() {
-    const ticTacToe = Game(); 
+function GameController(playerOne, playerTwo) {
+    const ticTacToe = Game(playerOne, playerTwo); 
     const gameGrid = document.querySelector('#cell-grid');
+    const newRoundButton = document.querySelector('#new-round');
 
     gameGrid.addEventListener('click', Play);
+
+    // If the user chooses to play another round.
+    newRoundButton.addEventListener('click', (event) => {
+        // Select all the buttons in the grid and remove their inner text.
+        document.querySelectorAll('#cell-grid > button').forEach((button) => {
+            button.innerText = '';
+        });
+    });
 
     function Play(event) {
         const activePlayer = ticTacToe.getActivePlayer();
@@ -182,3 +191,17 @@ function GameController() {
         }
     }
 }
+
+function GameStarter() {
+    const startButton = document.querySelector('#start-game');
+    
+    startButton.addEventListener('click', (event) => {
+        const [players] = [Array.from(document.querySelectorAll('.player-name'))];
+        GameController(players[0].value, players[1].value);
+        event.preventDefault();
+    });
+
+
+}
+
+GameStarter();

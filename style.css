@@ -20,7 +20,7 @@ body {
     cursor: pointer;
 }
 
-button {
+#cell-grid > button {
     font-family: Workbench;
     border: none;
     font-size: xx-large;
