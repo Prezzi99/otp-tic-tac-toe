@@ -182,6 +182,7 @@ function GameController(playerOne, playerTwo) {
 
     const newRoundButton = document.querySelector('#new-round');
     const restartGameButton = document.querySelector('#new-game');
+    const scoresDisplay = document.querySelectorAll('.scores')
 
     gameGrid.addEventListener('click', Play);
 
@@ -218,26 +219,35 @@ function GameController(playerOne, playerTwo) {
         }
 
         if (ticTacToe.getFinalMove()) {
+            updateScoreBoard(); //Update scoreboard on every final move.
             newRoundButton.classList.toggle('hidden');
             restartGameButton.classList.toggle('hidden');
+        }
+
+        function updateScoreBoard() {
+            const scores = ticTacToe.getScores();
+            scoresDisplay[0].innerText = `${scores.playerOneScore}`;
+            scoresDisplay[1].innerText = `${scores.playerTwoScore}`;
+            scoresDisplay[2].innerText = `${scores.draws}`;
         }
     }
 }
 
 function StartGame() { 
     const startButton = document.querySelector('#start-game')
-    const gameGrid = document.querySelector('#cell-grid');
     startButton.addEventListener('click', Start);
 
     function Start(event) {
+        // Get player names
         const [players] = [Array.from(document.querySelectorAll('.player-name'))];
         GameController(players[0].value, players[1].value);
-        // Display the grid
-        gameGrid.style.display = 'grid';
+        // Render players names on the scoreboard
+        document.querySelectorAll('#scoreboard > .player-name').forEach((element, index) => 
+        element.innerText = `${players[index].value}`);
+        // Display the grid and score board
+        document.querySelector('#cell-grid').style.display = 'grid';
+        document.querySelector('#scoreboard').classList.toggle('hidden');
+
         event.preventDefault();
     }
-}
-
-function ScoreBoard() {
-
 }
