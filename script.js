@@ -1,4 +1,5 @@
-// GameController()
+StartGame();
+// InterfaceControl();
 
 // For controlling the game flow.
 function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
@@ -51,6 +52,8 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
     // Count plays
     let playCount = 0;
     let draws = 0; // Count ties
+    let winner; // Winner of the last round
+    let finalMove //Capture the final move
 
     // Create players
     const players = [
@@ -64,18 +67,20 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
     function MakePlay(row, column, player) {
         validPlay = gameBoard.UpdateBoard(row, column, player.mark);
         if (validPlay) {
-            PrintBoard();
             playCount++ 
             winner = FindWinner({row, column});
+            finalMove = (winner || playCount == 9) ? true : false;
             if (winner) {
                 console.log({winner});
                 winner.score++;
                 gameBoard.NewBoard();
+                playCount = 0;
             }
 
             if (playCount === 9) {   
                 gameBoard.NewBoard();
                 if (!winner) draws++
+                playCount = 0;
             }
 
             SwitchPlayer(player);
@@ -94,7 +99,7 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
         else if (activePlayer.mark === 'O') {
             player = players[0];
         }
-    }
+    };
 
     function PrintBoard() {
         let board = [];
@@ -104,9 +109,22 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
         console.log(board);
     };
 
-    function resetBoard() { gameBoard.NewBoard() }
+    function resetScores() { 
+        for (const player of players) player.score = 0;
+        draws = 0;
+    };
 
     function getActivePlayer() { return player };
+
+    function getFinalMove() { return finalMove };
+
+    function getScores() { 
+        return {
+            playerOneScore: players[0].score, 
+            playerTwoScore: players[1].score,
+            draws: draws
+        } 
+    };
 
     function FindWinner(indecies) {
         // Abort if there are less than 3 marks on the board.
@@ -152,26 +170,35 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
                 return (accumulator === mark) ? accumulator = mark : accumulator = false;
             }
         }
-    }
+    };
 
-    return { MakePlay, getActivePlayer, resetBoard, playCount };
+    return { MakePlay, getActivePlayer, resetScores, getFinalMove, getScores };
 }
 
-// Controls interface between Game and the DOM.
+// Allows users to start and restart the game, and play a new round.
 function GameController(playerOne, playerTwo) {
     const ticTacToe = Game(playerOne, playerTwo); 
     const gameGrid = document.querySelector('#cell-grid');
+
     const newRoundButton = document.querySelector('#new-round');
+    const restartGameButton = document.querySelector('#new-game');
 
     gameGrid.addEventListener('click', Play);
 
     // If the user chooses to play another round.
-    newRoundButton.addEventListener('click', (event) => {
-        // Select all the buttons in the grid and remove their inner text.
-        document.querySelectorAll('#cell-grid > button').forEach((button) => {
-            button.innerText = '';
-        });
+    newRoundButton.addEventListener('click', removeMarks);
+    restartGameButton.addEventListener('click', () => {
+        removeMarks();
+        ticTacToe.resetScores();
     });
+
+    function removeMarks() {
+         // Select all the buttons in the grid and remove their inner text.
+         document.querySelectorAll('#cell-grid > button').forEach((button) => button.innerText = '');
+        //  Hide buttons
+        newRoundButton.classList.toggle('hidden');
+        restartGameButton.classList.toggle('hidden');
+    }
 
     function Play(event) {
         const activePlayer = ticTacToe.getActivePlayer();
@@ -181,7 +208,7 @@ function GameController(playerOne, playerTwo) {
             row: event.target.dataset.row,
             column: event.target.dataset.column
         };
-
+        // console.log(ticTacToe.getScores());
         const validPlay = ticTacToe.MakePlay(indecies.row, indecies.column, activePlayer);
         if (validPlay) markCell(playerMark, event);
 
@@ -189,19 +216,28 @@ function GameController(playerOne, playerTwo) {
             const cell = event.target;
             cell.innerText = playerMark;
         }
+
+        if (ticTacToe.getFinalMove()) {
+            newRoundButton.classList.toggle('hidden');
+            restartGameButton.classList.toggle('hidden');
+        }
     }
 }
 
-function GameStarter() {
-    const startButton = document.querySelector('#start-game');
-    
-    startButton.addEventListener('click', (event) => {
+function StartGame() { 
+    const startButton = document.querySelector('#start-game')
+    const gameGrid = document.querySelector('#cell-grid');
+    startButton.addEventListener('click', Start);
+
+    function Start(event) {
         const [players] = [Array.from(document.querySelectorAll('.player-name'))];
         GameController(players[0].value, players[1].value);
+        // Display the grid
+        gameGrid.style.display = 'grid';
         event.preventDefault();
-    });
-
-
+    }
 }
 
-GameStarter();
+function ScoreBoard() {
+
+}

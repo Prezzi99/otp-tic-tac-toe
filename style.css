@@ -9,11 +9,15 @@ body {
 
 #cell-grid {
     margin-top: 30px;
-    display: grid;
+    display: none;
     gap: 2px;
     width: 220px;
     height: 200px;
     grid-template: repeat(3, 1fr) / repeat(3, 1fr)
+}
+
+.hidden {
+    display: none;
 }
 
 #cell-grid:hover {

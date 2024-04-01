@@ -15,9 +15,12 @@
         <label for="player-two">Player Two</label>
         <input type="text" class="player-name" required id="player-two">
 
-        <input type="submit" id="start-game">
+        <input type="submit" id="start-game" value="Start Game">
     </form>
-    <button id="new-round">Play Again</button>
+
+    <button id="new-round" class="hidden">Play Again</button>
+    <button id="new-game" class="hidden">Restart Game</button>
+
     <div id="cell-grid">
         <button data-row="0" data-column="0"></button>
         <button data-row="0" data-column="1"></button>
