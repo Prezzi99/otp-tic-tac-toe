@@ -8,12 +8,15 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    <form action="" method="post">
-        <label for="player-one">Player One</label>
-        <input type="text" class="player-name" required id="player-one">
+    <h1>Tic Tac Toe</h1>
+    <form action="" method="post" id="names-start">
+        <!-- <label for="player-one">Player One</label> -->
+        <input type="text" maxlength="8" class="player-name" required 
+        id="player-one" placeholder="Player One">
 
-        <label for="player-two">Player Two</label>
-        <input type="text" class="player-name" required id="player-two">
+        <!-- <label for="player-two">Player Two</label> -->
+        <input type="text" maxlength="8" class="player-name" required
+        id="player-two" placeholder="Player Two">
 
         <input type="submit" id="start-game" value="Start Game">
     </form>
@@ -33,14 +36,14 @@
         <button data-row="2" data-column="2"></button>
     </div>
 
-    <div id="scoreboard" class="hidden">
+    <div id="scoreboard">
         <h3 class="player-name"></h3>
-        <h2 class="scores">0</h2>
-
+        <h3 class="player-name"></h3>
         <h3 id="draw">Draws</h3>
-        <h2 class="scores"h2>
+        
 
-        <h3 class="player-name"></h3>
+        <h2 class="scores">0</h2>
+        <h2 class="scores">0</h2>
         <h2 class="scores">0</h2>
     </div>
 </body>

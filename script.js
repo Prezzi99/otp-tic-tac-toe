@@ -244,9 +244,12 @@ function StartGame() {
         // Render players names on the scoreboard
         document.querySelectorAll('#scoreboard > .player-name').forEach((element, index) => 
         element.innerText = `${players[index].value}`);
+
         // Display the grid and score board
         document.querySelector('#cell-grid').style.display = 'grid';
-        document.querySelector('#scoreboard').classList.toggle('hidden');
+        document.querySelector('#scoreboard').style.display = 'grid';
+        // Hide the form (input fields and submit button)
+        document.querySelector('#names-start').style.display = 'none';
 
         event.preventDefault();
     }
