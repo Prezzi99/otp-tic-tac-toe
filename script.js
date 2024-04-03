@@ -83,7 +83,7 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
                 playCount = 0;
             }
 
-            SwitchPlayer(player);
+            if (!(finalMove && player.mark == 'X')) SwitchPlayer(player);
             return true;
         }
         else {
@@ -99,14 +99,6 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
         else if (activePlayer.mark === 'O') {
             player = players[0];
         }
-    };
-
-    function PrintBoard() {
-        let board = [];
-        gameBoard.GetBoard().forEach((row) => {
-            board.push(row.map((cell) => cell.GetMark()));
-        });
-        console.log(board);
     };
 
     function resetScores() { 
@@ -172,7 +164,9 @@ function Game(playerOne = 'Player One', playerTwo = 'Player Two') {
         }
     };
 
-    return { MakePlay, getActivePlayer, resetScores, getFinalMove, getScores };
+    function getWinner() { return winner };
+
+    return { MakePlay, getActivePlayer, resetScores, getFinalMove, getScores, getWinner };
 }
 
 // Allows users to start and restart the game, and play a new round.
@@ -183,6 +177,7 @@ function GameController(playerOne, playerTwo) {
     const newRoundButton = document.querySelector('#new-round');
     const restartGameButton = document.querySelector('#new-game');
     const scoresDisplay = document.querySelectorAll('.scores')
+    const modal = document.querySelector('#modal');
 
     gameGrid.addEventListener('click', Play);
 
@@ -191,14 +186,16 @@ function GameController(playerOne, playerTwo) {
     restartGameButton.addEventListener('click', () => {
         removeMarks();
         ticTacToe.resetScores();
+        // Reset the DOM values
+        scoresDisplay.forEach((element) => element.innerText = 0);
+        toggleView('off');
     });
 
     function removeMarks() {
          // Select all the buttons in the grid and remove their inner text.
          document.querySelectorAll('#cell-grid > button').forEach((button) => button.innerText = '');
-        //  Hide buttons
-        newRoundButton.classList.toggle('hidden');
-        restartGameButton.classList.toggle('hidden');
+        //  Hide the modal
+        modal.style.display = 'none'
     }
 
     function Play(event) {
@@ -220,8 +217,14 @@ function GameController(playerOne, playerTwo) {
 
         if (ticTacToe.getFinalMove()) {
             updateScoreBoard(); //Update scoreboard on every final move.
-            newRoundButton.classList.toggle('hidden');
-            restartGameButton.classList.toggle('hidden');
+            
+            setTimeout(() => {
+                modal.style.display = 'block';
+                // Display the winners mark
+                const winnerMark = (ticTacToe.getWinner()) ? ticTacToe.getWinner().mark : 'X O';
+                document.querySelector('#winner-mark').innerText = `${winnerMark}`;
+                document.querySelector('#outcome').innerText = (ticTacToe.getWinner()) ? 'W I N N E R!' : 'D R A W';
+            }, 500);
         }
 
         function updateScoreBoard() {
@@ -241,16 +244,30 @@ function StartGame() {
         // Get player names
         const [players] = [Array.from(document.querySelectorAll('.player-name'))];
         GameController(players[0].value, players[1].value);
-        // Render players names on the scoreboard
+
+        // Render player names on the scoreboard
         document.querySelectorAll('#scoreboard > .player-name').forEach((element, index) => 
         element.innerText = `${players[index].value}`);
+        // Display the grid and scoreboard.
+        toggleView('on');
+        // event.preventDefault();
+    }
+}
 
-        // Display the grid and score board
-        document.querySelector('#cell-grid').style.display = 'grid';
-        document.querySelector('#scoreboard').style.display = 'grid';
-        // Hide the form (input fields and submit button)
-        document.querySelector('#names-start').style.display = 'none';
-
-        event.preventDefault();
+function toggleView(state = 'on') {
+    switch (state) {
+        case 'on':
+            // Display the grid and scoreboard
+            document.querySelector('#cell-grid').style.display = 'grid';
+            document.querySelector('#scoreboard').style.display = 'grid';
+            // Hide the form (input fields and submit button)
+            document.querySelector('#names-start').style.display = 'none';
+            break;
+        case 'off':
+            // Display the grid and scoreboard
+            document.querySelector('#cell-grid').style.display = 'none';
+            document.querySelector('#scoreboard').style.display = 'none';
+            // Hide the form (input fields and submit button)
+            document.querySelector('#names-start').style.display = 'flex';  
     }
 }
